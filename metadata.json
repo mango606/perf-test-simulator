@@ -1,0 +1,6 @@
+{
+  "name": "성능 테스트 시뮬레이터",
+  "description": "다양한 성능 테스트(Load, Stress, Soak, Spike)를 시각적으로 이해하고 실행해 볼 수 있는 인터랙티브 시뮬레이터 설계 도구입니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
