@@ -1,0 +1,60 @@
+name: Deploy to GitHub Pages
+
+on:
+  # main 브랜치에 코드 변경사항이 push될 때마다 배포가 실행됩니다.
+  push:
+    branches: ["main"]
+
+  # GitHub Actions 탭에서 수동으로 버튼을 눌러 실행할 수 있도록 허용합니다.
+  workflow_dispatch:
+
+# GitHub Pages 배포를 위한 권한 설정 (필수)
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 동시에 여러 배포가 트리거 시 순차 및 취소 정책 설정
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # 1. 빌드 단계
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Build
+        run: npm run build
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist' # Vite 빌드 결과물이 저장되는 폴더
+
+  # 2. 배포 단계
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
